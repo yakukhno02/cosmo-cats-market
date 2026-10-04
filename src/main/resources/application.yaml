@@ -1,3 +1,7 @@
 spring:
   application:
     name: cosmo-cats-market
+
+springdoc:
+  swagger-ui:
+    url: /api-specs.product-api-spec.yml
