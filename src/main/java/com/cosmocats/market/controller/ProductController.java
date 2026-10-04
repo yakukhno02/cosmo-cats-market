@@ -1,6 +1,7 @@
 package com.cosmocats.market.controller;
 
 import com.cosmocats.market.domain.Product;
+import com.cosmocats.market.dto.ProductPageDto;
 import com.cosmocats.market.dto.ProductRequestDto;
 import com.cosmocats.market.dto.ProductResponseDto;
 import com.cosmocats.market.mapper.ProductMapper;
@@ -25,11 +26,22 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<ProductResponseDto> getAllProducts() {
-        return productService.getAllProducts()
+    public ProductPageDto getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        List<ProductResponseDto> content = productService
+                .getProductsPage(page, size)
                 .stream()
                 .map(productMapper::toDto)
                 .toList();
+
+        return new ProductPageDto(
+                content,
+                page,
+                size,
+                productService.getTotalProductsCount()
+        );
     }
 
     @GetMapping("/{id}")

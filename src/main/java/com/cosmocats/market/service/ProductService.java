@@ -61,6 +61,22 @@ public class ProductService {
         return existingProduct;
     }
 
+    public List<Product> getProductsPage(int page, int size) {
+        int fromIndex = page * size;
+
+        if (fromIndex >= products.size()) {
+            return List.of();
+        }
+
+        int toIndex = Math.min(fromIndex + size, products.size());
+
+        return products.subList(fromIndex, toIndex);
+    }
+
+    public long getTotalProductsCount() {
+        return products.size();
+    }
+
     public void deleteProduct(Long id) {
         Product product = getProductById(id);
         products.remove(product);
