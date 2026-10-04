@@ -42,4 +42,22 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(error);
     }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleProductNotFoundException(
+            ProductNotFoundException exception,
+            HttpServletRequest request
+    ) {
+        ErrorResponse error = new ErrorResponse(
+                "https://cosmo-cats.market/errors/product-not-found",
+                "Product not found",
+                404,
+                exception.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(error);
+    }
 }

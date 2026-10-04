@@ -2,6 +2,7 @@ package com.cosmocats.market.service;
 
 import com.cosmocats.market.domain.Category;
 import com.cosmocats.market.domain.Product;
+import com.cosmocats.market.exception.ProductNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class ProductService {
         return products.stream()
                 .filter(product -> product.getId().equals(id))
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new ProductNotFoundException(id));
     }
 
     public Product createProduct(Product product) {
@@ -52,10 +53,6 @@ public class ProductService {
     public Product updateProduct(Long id, Product updatedProduct) {
         Product existingProduct = getProductById(id);
 
-        if (existingProduct == null) {
-            return null;
-        }
-
         existingProduct.setName(updatedProduct.getName());
         existingProduct.setDescription(updatedProduct.getDescription());
         existingProduct.setPrice(updatedProduct.getPrice());
@@ -64,7 +61,8 @@ public class ProductService {
         return existingProduct;
     }
 
-    public boolean deleteProduct(Long id) {
-        return products.removeIf(product -> product.getId().equals(id));
+    public void deleteProduct(Long id) {
+        Product product = getProductById(id);
+        products.remove(product);
     }
 }
