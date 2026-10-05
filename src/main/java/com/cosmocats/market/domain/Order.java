@@ -8,12 +8,12 @@ public class Order {
     private Long id;
     private List<Product> products;
     private BigDecimal totalPrice;
-    private String status;
+    private OrderStatus status;
 
     public Order() {
     }
 
-    public Order(Long id, List<Product> products, BigDecimal totalPrice, String status) {
+    public Order(Long id, List<Product> products, BigDecimal totalPrice, OrderStatus status) {
         this.id = id;
         this.products = products;
         this.totalPrice = totalPrice;
@@ -44,11 +44,11 @@ public class Order {
         this.totalPrice = totalPrice;
     }
 
-    public String getStatus() {
+    public OrderStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(OrderStatus status) {
         this.status = status;
     }
 }
