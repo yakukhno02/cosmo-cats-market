@@ -1,17 +1,19 @@
 package com.cosmocats.market.dto;
 
+import java.math.BigDecimal;
+
 public class ProductResponseDto {
 
     private Long id;
     private String name;
     private String description;
-    private Double price;
+    private BigDecimal price;
     private String category;
 
     public ProductResponseDto() {
     }
 
-    public ProductResponseDto(Long id, String name, String description, Double price, String category) {
+    public ProductResponseDto(Long id, String name, String description, BigDecimal price, String category) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -43,11 +45,11 @@ public class ProductResponseDto {
         this.description = description;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

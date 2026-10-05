@@ -1,18 +1,19 @@
 package com.cosmocats.market.domain;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class Order {
 
     private Long id;
     private List<Product> products;
-    private Double totalPrice;
+    private BigDecimal totalPrice;
     private String status;
 
     public Order() {
     }
 
-    public Order(Long id, List<Product> products, Double totalPrice, String status) {
+    public Order(Long id, List<Product> products, BigDecimal totalPrice, String status) {
         this.id = id;
         this.products = products;
         this.totalPrice = totalPrice;
@@ -35,11 +36,11 @@ public class Order {
         this.products = products;
     }
 
-    public Double getTotalPrice() {
+    public BigDecimal getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(Double totalPrice) {
+    public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
     }
 
