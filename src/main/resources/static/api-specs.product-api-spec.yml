@@ -1,0 +1,239 @@
+openapi: 3.1.1
+
+info:
+  title: Cosmo Cats Product API
+  description: API for managing products in the Cosmo Cats Intergalactic Marketplace
+  version: 1.0.0
+
+paths:
+  /api/v1/products:
+    get:
+      summary: Get all products
+      tags:
+        - Products
+      responses:
+        '200':
+          description: List of all products
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDetailsListDto'
+
+    post:
+      summary: Create a new product
+      tags:
+        - Products
+      requestBody:
+        description: Product data to create a new product
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductDetailsDto'
+      responses:
+        '200':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDetailsDto'
+
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+
+  /api/v1/products/{id}:
+    get:
+      summary: Get product by ID
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the product to retrieve
+      responses:
+        '200':
+          description: Product found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDetailsDto'
+
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      summary: Update product by ID
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the product to update
+      requestBody:
+        description: Updated product data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductDetailsDto'
+      responses:
+        '200':
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDetailsDto'
+
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete product by ID
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the product to delete
+      responses:
+        '200':
+          description: Product deleted successfully
+
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+
+    ProductDetailsDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the product
+
+        name:
+          type: string
+          maxLength: 100
+          description: Name of the product
+
+        description:
+          type: string
+          maxLength: 500
+          description: Description of the product
+
+        price:
+          type: number
+          format: double
+          description: Price of the product
+
+        category:
+          type: string
+          maxLength: 50
+          description: Product category
+
+    ProductDetailsListDto:
+      type: object
+      properties:
+        productDetailsEntries:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductDetailsEntry'
+
+    ProductDetailsEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the product
+
+        name:
+          type: string
+          description: Name of the product
+
+        description:
+          type: string
+          description: Description of the product
+
+        price:
+          type: number
+          format: double
+          description: Price of the product
+
+        category:
+          type: string
+          description: Product category
+
+    ValidationError:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "400"
+
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParamsViolationDetails'
+
+    ErrorResponse:
+      type: object
+      properties:
+        type:
+          type: string
+          description: URI reference identifying the error type
+
+        title:
+          type: string
+          description: A short description of the error
+
+        status:
+          type: integer
+          description: HTTP status code
+
+        detail:
+          type: string
+          description: Detailed description of the error
+
+    ParamsViolationDetails:
+      type: object
+      properties:
+        fieldName:
+          type: string
+          description: Field where validation error occurred
+
+        reason:
+          type: string
+          description: Reason for the validation error
