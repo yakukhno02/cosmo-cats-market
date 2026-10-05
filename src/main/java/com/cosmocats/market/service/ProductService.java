@@ -5,6 +5,7 @@ import com.cosmocats.market.domain.Product;
 import com.cosmocats.market.exception.ProductNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class ProductService {
                 1L,
                 "Galaxy Milk",
                 "Cosmic milk for cats",
-                15.99,
+                new BigDecimal("15.99"),
                 new Category(1L, "Food", "Cosmic food")
         ));
 
@@ -27,7 +28,7 @@ public class ProductService {
                 2L,
                 "Star Yarn",
                 "Anti-gravity yarn for cosmic cats",
-                24.99,
+                new BigDecimal("24.99"),
                 new Category(2L, "Toys", "Space toys")
         ));
     }
@@ -62,12 +63,13 @@ public class ProductService {
     }
 
     public List<Product> getProductsPage(int page, int size) {
-        int fromIndex = page * size;
+        long offset = (long) page * size;
 
-        if (fromIndex >= products.size()) {
+        if (offset >= products.size()) {
             return List.of();
         }
 
+        int fromIndex = (int) offset;
         int toIndex = Math.min(fromIndex + size, products.size());
 
         return products.subList(fromIndex, toIndex);
