@@ -36,7 +36,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProductDetailsListDto'
+                $ref: '#/components/schemas/ProductPageDto'
 
     post:
       summary: Create a new product
@@ -183,37 +183,31 @@ components:
           maxLength: 50
           description: Product category
 
-    ProductDetailsListDto:
+    ProductPageDto:
       type: object
+      required:
+        - content
+        - page
+        - size
+        - totalElements
       properties:
-        productDetailsEntries:
+        content:
           type: array
           items:
-            $ref: '#/components/schemas/ProductDetailsEntry'
-
-    ProductDetailsEntry:
-      type: object
-      properties:
-        id:
+            $ref: '#/components/schemas/ProductDetailsDto'
+        page:
           type: integer
-          description: Unique identifier of the product
-
-        name:
-          type: string
-          description: Name of the product
-
-        description:
-          type: string
-          description: Description of the product
-
-        price:
-          type: number
-          format: double
-          description: Price of the product
-
-        category:
-          type: string
-          description: Product category
+          minimum: 0
+          description: Current page number
+        size:
+          type: integer
+          minimum: 1
+          description: Number of products per page
+        totalElements:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Total number of products
 
     ValidationError:
       type: object
