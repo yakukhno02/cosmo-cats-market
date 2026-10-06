@@ -60,9 +60,9 @@ paths:
         '400':
           description: Invalid input
           content:
-            application/json:
+            application/problem+json:
               schema:
-                $ref: '#/components/schemas/ValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
 
   /api/v1/products/{id}:
     get:
@@ -87,7 +87,7 @@ paths:
         '404':
           description: Product not found
           content:
-            application/json:
+            application/problem+json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
@@ -120,14 +120,14 @@ paths:
         '400':
           description: Invalid input
           content:
-            application/json:
+            application/problem+json:
               schema:
-                $ref: '#/components/schemas/ValidationError'
+                $ref: '#/components/schemas/ErrorResponse'
 
         '404':
           description: Product not found
           content:
-            application/json:
+            application/problem+json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
@@ -149,7 +149,7 @@ paths:
         '404':
           description: Product not found
           content:
-            application/json:
+            application/problem+json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
@@ -209,20 +209,14 @@ components:
           minimum: 0
           description: Total number of products
 
-    ValidationError:
-      type: object
-      properties:
-        status:
-          type: string
-          example: "400"
-
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ParamsViolationDetails'
-
     ErrorResponse:
       type: object
+      required:
+        - type
+        - title
+        - status
+        - detail
+        - instance
       properties:
         type:
           type: string
@@ -240,13 +234,6 @@ components:
           type: string
           description: Detailed description of the error
 
-    ParamsViolationDetails:
-      type: object
-      properties:
-        fieldName:
+        instance:
           type: string
-          description: Field where validation error occurred
-
-        reason:
-          type: string
-          description: Reason for the validation error
+          description: URI of the request where the error occurred
