@@ -4,4 +4,4 @@ spring:
 
 springdoc:
   swagger-ui:
-    url: /api-specs.product-api-spec.yml
+    url: /api-specs/product-api-spec.yml
