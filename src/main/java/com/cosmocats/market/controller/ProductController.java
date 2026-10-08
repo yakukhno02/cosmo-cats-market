@@ -7,14 +7,18 @@ import com.cosmocats.market.dto.ProductResponseDto;
 import com.cosmocats.market.mapper.ProductMapper;
 import com.cosmocats.market.service.ProductService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/products")
+@Validated
 public class ProductController {
 
     private final ProductService productService;
@@ -27,8 +31,8 @@ public class ProductController {
 
     @GetMapping
     public ProductPageDto getAllProducts(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size
     ) {
         List<ProductResponseDto> content = productService
                 .getProductsPage(page, size)

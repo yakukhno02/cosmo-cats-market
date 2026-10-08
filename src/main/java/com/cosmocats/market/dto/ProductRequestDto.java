@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
+import java.math.BigDecimal;
+
 public class ProductRequestDto {
 
     @CosmicWordCheck
@@ -18,7 +20,7 @@ public class ProductRequestDto {
 
     @NotNull(message = "Price is required")
     @Positive(message = "Price must be greater than 0")
-    private Double price;
+    private BigDecimal price;
 
     @NotBlank(message = "Category is required")
     @Size(max = 50, message = "Category must not exceed 50 characters")
@@ -27,7 +29,7 @@ public class ProductRequestDto {
     public ProductRequestDto() {
     }
 
-    public ProductRequestDto(String name, String description, Double price, String category) {
+    public ProductRequestDto(String name, String description, BigDecimal price, String category) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -50,11 +52,11 @@ public class ProductRequestDto {
         this.description = description;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
