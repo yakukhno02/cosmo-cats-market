@@ -17,8 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,30 +44,41 @@ public class OrderServiceImpl implements OrderService {
                 .items(new ArrayList<>())
                 .build();
 
+        Map<Long, Long> productCounts = productIds.stream()
+                .collect(Collectors.groupingBy(Function.identity(), LinkedHashMap::new, Collectors.counting()));
+
         BigDecimal total = BigDecimal.ZERO;
         List<Product> domainProducts = new ArrayList<>();
 
-        for (Long productId : productIds) {
+        for (Map.Entry<Long, Long> entry : productCounts.entrySet()) {
+            Long productId = entry.getKey();
+            int quantity = entry.getValue().intValue();
+
             ProductEntity productEntity = productRepository.findById(productId)
                     .orElseThrow(() -> new ProductNotFoundException(productId));
+
+            BigDecimal itemTotal = productEntity.getPrice().multiply(BigDecimal.valueOf(quantity));
 
             OrderItemEntity item = OrderItemEntity.builder()
                     .order(orderEntity)
                     .product(productEntity)
-                    .quantity(1)
+                    .quantity(quantity)
                     .price(productEntity.getPrice())
                     .build();
 
             orderEntity.getItems().add(item);
-            total = total.add(productEntity.getPrice());
+            total = total.add(itemTotal);
 
-            domainProducts.add(new Product(
+            Product domainProduct = new Product(
                     productEntity.getId(),
                     productEntity.getName(),
                     productEntity.getDescription(),
                     productEntity.getPrice(),
                     null
-            ));
+            );
+            for (int i = 0; i < quantity; i++) {
+                domainProducts.add(domainProduct);
+            }
         }
 
         orderEntity.setTotalPrice(total);
@@ -78,15 +93,20 @@ public class OrderServiceImpl implements OrderService {
         OrderEntity orderEntity = orderRepository.findByNaturalId(orderNumber)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found: " + orderNumber));
 
-        List<Product> domainProducts = orderEntity.getItems().stream()
-                .map(item -> new Product(
-                        item.getProduct().getId(),
-                        item.getProduct().getName(),
-                        item.getProduct().getDescription(),
-                        item.getPrice(),
-                        null
-                ))
-                .toList();
+        List<Product> domainProducts = new ArrayList<>();
+        for (OrderItemEntity item : orderEntity.getItems()) {
+            Product product = new Product(
+                    item.getProduct().getId(),
+                    item.getProduct().getName(),
+                    item.getProduct().getDescription(),
+                    item.getPrice(),
+                    null
+            );
+            int quantity = item.getQuantity() != null ? item.getQuantity() : 1;
+            for (int i = 0; i < quantity; i++) {
+                domainProducts.add(product);
+            }
+        }
 
         return new Order(orderEntity.getId(), domainProducts, orderEntity.getTotalPrice(), OrderStatus.valueOf(orderEntity.getStatus()));
     }

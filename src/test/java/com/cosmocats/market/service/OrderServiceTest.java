@@ -81,6 +81,30 @@ class OrderServiceTest {
         }
 
         @Test
+        @DisplayName("should group multiple quantities of the same product to respect unique constraint")
+        void shouldGroupMultipleQuantitiesOfSameProduct() {
+            ProductEntity p1 = ProductEntity.builder()
+                    .id(1L)
+                    .name("Laser Toy")
+                    .price(new BigDecimal("20.00"))
+                    .build();
+
+            when(productRepository.findById(1L)).thenReturn(Optional.of(p1));
+            when(orderRepository.save(any(OrderEntity.class))).thenAnswer(invocation -> {
+                OrderEntity entity = invocation.getArgument(0);
+                assertThat(entity.getItems()).hasSize(1);
+                assertThat(entity.getItems().getFirst().getQuantity()).isEqualTo(3);
+                return entity.toBuilder().id(101L).build();
+            });
+
+            Order result = orderService.placeOrder("cat@galaxy.com", List.of(1L, 1L, 1L));
+
+            assertThat(result.getId()).isEqualTo(101L);
+            assertThat(result.getTotalPrice()).isEqualByComparingTo(new BigDecimal("60.00"));
+            assertThat(result.getProducts()).hasSize(3);
+        }
+
+        @Test
         @DisplayName("should throw ProductNotFoundException when any product does not exist")
         void shouldThrowWhenProductNotFound() {
             when(productRepository.findById(999L)).thenReturn(Optional.empty());
