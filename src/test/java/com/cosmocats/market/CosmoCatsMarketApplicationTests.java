@@ -1,10 +1,8 @@
 package com.cosmocats.market;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class CosmoCatsMarketApplicationTests {
+class CosmoCatsMarketApplicationTests extends AbstractIt {
 
     @Test
     void contextLoads() {
