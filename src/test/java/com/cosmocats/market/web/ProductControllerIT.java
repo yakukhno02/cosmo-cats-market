@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -197,6 +198,28 @@ class ProductControllerIT {
                     .andExpect(jsonPath("$.name").value("Star Collar"))
                     .andExpect(jsonPath("$.price").value(19.99))
                     .andExpect(jsonPath("$.category").value("Accessories"));
+        }
+
+        @Test
+        @DisplayName("should return 409 Conflict when product name already exists in category")
+        void shouldReturn409WhenDuplicateProduct() throws Exception {
+            ProductRequestDto requestDto = new ProductRequestDto(
+                    "Star Collar",
+                    "Cosmic collar for cats",
+                    new BigDecimal("19.99"),
+                    "Accessories"
+            );
+
+            when(productService.createProduct(any(Product.class)))
+                    .thenThrow(new DataIntegrityViolationException("duplicate key"));
+
+            mockMvc.perform(post("/api/v1/products")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(requestDto)))
+                    .andExpect(status().isConflict())
+                    .andExpect(jsonPath("$.status").value(409))
+                    .andExpect(jsonPath("$.title").value("Conflict"))
+                    .andExpect(jsonPath("$.detail").value("A product with this name already exists in this category"));
         }
 
         @Test
