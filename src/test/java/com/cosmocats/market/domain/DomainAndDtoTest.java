@@ -165,10 +165,10 @@ class DomainAndDtoTest {
         ProductResponseDto item = new ProductResponseDto(1L, "Star", "Desc", BigDecimal.TEN, "Toys");
         ProductPageDto pageDto = new ProductPageDto(List.of(item), 0, 10, 1L);
 
-        assertThat(pageDto.getContent()).containsExactly(item);
-        assertThat(pageDto.getPage()).isEqualTo(0);
-        assertThat(pageDto.getSize()).isEqualTo(10);
-        assertThat(pageDto.getTotalElements()).isEqualTo(1L);
+        assertThat(pageDto.content()).containsExactly(item);
+        assertThat(pageDto.page()).isEqualTo(0);
+        assertThat(pageDto.size()).isEqualTo(10);
+        assertThat(pageDto.totalElements()).isEqualTo(1L);
     }
 
     @Test
@@ -182,10 +182,10 @@ class DomainAndDtoTest {
                 "/api/v1/products"
         );
 
-        assertThat(error.getType()).isEqualTo("https://cosmo-cats.market/errors/validation");
-        assertThat(error.getTitle()).isEqualTo("Validation failed");
-        assertThat(error.getStatus()).isEqualTo(400);
-        assertThat(error.getDetail()).isEqualTo("Detail message");
-        assertThat(error.getInstance()).isEqualTo("/api/v1/products");
+        assertThat(error.type()).isEqualTo("https://cosmo-cats.market/errors/validation");
+        assertThat(error.title()).isEqualTo("Validation failed");
+        assertThat(error.status()).isEqualTo(400);
+        assertThat(error.detail()).isEqualTo("Detail message");
+        assertThat(error.instance()).isEqualTo("/api/v1/products");
     }
 }
